@@ -111,7 +111,7 @@ def generate_report(hours=24):
     <body>
         <h1>Bird Detection Report - Past {{ hours }} Hours</h1>
         <h2>{{ species_list|length }} Species, {{ species_list|sum(attribute='count') }} Total Detections</h2>
-        <p>Generated on {{ generated_on }} from <a href="{{ friendly_url }}">BirdWeather station {{config.STATION_TOKEN}}</p>
+        <p>Generated on {{ generated_on }} from <a href="{{ friendly_url }}">BirdWeather station {{config.STATION_TOKEN}}</a></p>
         {% for species in species_list %}
         <div class="species-card">
             <div class="species-header">
