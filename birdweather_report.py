@@ -94,18 +94,65 @@ def generate_report(hours=24):
     <html>
     <head>
         <style>
-            body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
-            .species-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-            .species-header { display: flex; gap: 20px; margin-bottom: 15px; }
-            .species-image { width: 150px; height: 150px; object-fit: cover; border-radius: 8px; }
-            .species-info { flex: 1; }
-            .species-name { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
-            .scientific-name { font-style: italic; color: #666; }
-            .hour-grid { display: flex; gap: 2px; margin-top: 10px; }
-            .hour-cell { width: 25px; height: 25px; border: 1px solid #eee; }
-            .grid-header { display: flex; gap: 2px; margin-bottom: 4px; }
-            .hour-label { width: 25px; text-align: center; font-size: 11px; color: #666; }
-            .sound-link { display: inline-block; margin-top: 10px; color: #0066cc; text-decoration: none; }
+            body { 
+                font-family: Arial, sans-serif; 
+                max-width: 1000px; 
+                margin: 0 auto; 
+                padding: 20px; 
+            }
+            .species-card { 
+                border: 1px solid #ddd; 
+                border-radius: 8px; 
+                padding: 20px; 
+                margin-bottom: 20px; 
+            }
+            .species-header { 
+                display: flex; 
+                gap: 20px; 
+                margin-bottom: 15px; 
+            }
+            .species-image { 
+                width: 150px; 
+                height: 150px; 
+                object-fit: cover; 
+                border-radius: 8px; 
+            }
+            .species-info { 
+                flex: 1; 
+            }
+            .species-name { 
+                font-size: 20px; 
+                font-weight: bold; 
+                margin-bottom: 5px; 
+            }
+            .scientific-name { 
+                font-style: italic; 
+                color: #666; 
+            }
+            .hour-grid { 
+                display: flex; 
+                gap: 2px; 
+                margin-top: 10px; 
+            }
+            .hour-cell { 
+                width: 30px; 
+                height: 30px; 
+                border: 1px solid #eee;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+            .hour-number {
+                font-size: 11px;
+                font-weight: 500;
+            }
+            .sound-link { 
+                display: inline-block; 
+                margin-top: 10px; 
+                color: #0066cc; 
+                text-decoration: none; 
+            }
         </style>
     </head>
     <body>
@@ -131,19 +178,16 @@ def generate_report(hours=24):
                 </div>
             </div>
             
-            <div>
-                <div class="grid-header">
-                    {% for hour in range(24) %}
-                    <div class="hour-label">{{hour}}</div>
-                    {% endfor %}
+            <div class="hour-grid">
+                {% for hour in species.hours %}
+                <div class="hour-cell" 
+                     style="background-color: rgba(0, 100, 0, {{ hour.intensity / 100 }});" 
+                     title="{{ hour.count }} detections">
+                    <span class="hour-number" style="color: {{ 'white' if hour.intensity > 50 else 'black' }}">
+                        {{loop.index0}}
+                    </span>
                 </div>
-                <div class="hour-grid">
-                    {% for hour in species.hours %}
-                    <div class="hour-cell" style="background-color: rgba(0, 100, 0, {{ hour.intensity / 100 }});" 
-                         title="{{ hour.count }} detections">
-                    </div>
-                    {% endfor %}
-                </div>
+                {% endfor %}
             </div>
         </div>
         {% endfor %}
