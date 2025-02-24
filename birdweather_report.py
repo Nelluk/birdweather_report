@@ -3,12 +3,15 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
+from email.utils import parseaddr
 import requests
 from jinja2 import Template
 import argparse
-import config
 import logging
 import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import config
 
 logging.basicConfig(
     level=logging.INFO,
@@ -207,13 +210,25 @@ def send_email(html_content):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "BirdWeather Report 🦉"
     msg['From'] = config.EMAIL_FROM
-    msg['To'] = config.EMAIL_TO
+    
+    # to and cc can be either simple emails or lists of emails ['email1','email2']
+    # also any of these emails can be parsed from 'Your Name <youremail@domain>'
+    to_recipients = config.EMAIL_TO if isinstance(config.EMAIL_TO, list) else [config.EMAIL_TO]
+    cc_recipients = config.EMAIL_CC if isinstance(config.EMAIL_CC, list) else [config.EMAIL_CC]
+
+    msg['To'] = ", ".join(to_recipients)
+    msg['Cc'] = ", ".join(cc_recipients)
+
+    # Extract just the email addresses
+    recipient_addresses = [parseaddr(addr)[1] for addr in to_recipients + cc_recipients]
+
     msg.attach(MIMEText(html_content, 'html'))
 
     with smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT) as server:
         server.starttls()
         server.login(config.EMAIL_FROM, config.EMAIL_PASSWORD)
-        server.sendmail(config.EMAIL_FROM, config.EMAIL_TO, msg.as_string())
+        server.sendmail(config.EMAIL_FROM, recipient_addresses, msg.as_string())  # Send to extracted addresses
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate bird detection report')

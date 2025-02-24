@@ -1,5 +1,6 @@
 # config.py.template
 # Rename to config.py and fill in your values
+# Place config.py in the directory above your project directory
 
 EMAIL_TO = ""
 EMAIL_FROM = ""
