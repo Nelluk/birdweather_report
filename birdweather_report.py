@@ -70,7 +70,10 @@ def generate_report(hours=24):
         confidence = detection['confidence']
         if confidence > stats['max_confidence']:
             stats['max_confidence'] = confidence
-            stats['best_soundscape'] = detection['soundscape']
+            # Only store soundscape if it has a valid URL
+            soundscape = detection.get('soundscape')
+            if soundscape and soundscape.get('url'):
+                stats['best_soundscape'] = soundscape
             
         stats['hour_counts'][hour] += 1
     
@@ -170,7 +173,7 @@ def generate_report(hours=24):
                     <div class="scientific-name">{{ species.scientific_name }}</div>
                     <div>Detections: {{ species.count }}</div>
                     <div>Highest confidence: {{ "%.1f"|format(species.max_confidence * 100) }}%</div>
-                    {% if species.best_soundscape %}
+                    {% if species.best_soundscape and species.best_soundscape.url %}
                     <a href="{{ species.best_soundscape.url }}" class="sound-link">
                         Listen to best detection ({{ "%.1f"|format(species.best_soundscape.startTime) }}s - {{ "%.1f"|format(species.best_soundscape.endTime) }}s)
                     </a>
